@@ -105,7 +105,7 @@ body {
     transform: translateY(0);
   }
   100% {
-    transform: translateY(-50%);
+    transform: translateY(-33.33%);
   }
 }
 
@@ -207,46 +207,6 @@ body {
   margin-left: calc(-50vw + 50%);
 }
 
-/* Fade-out effects for scrolling sections */
-.scroll-fade-container {
-  position: relative;
-}
 
-.scroll-fade-container::before,
-.scroll-fade-container::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 100px;
-  z-index: 10;
-  pointer-events: none;
-}
 
-.scroll-fade-container::before {
-  left: 0;
-  background: linear-gradient(to right, rgba(248, 250, 249, 1) 0%, rgba(248, 250, 249, 0) 100%);
-}
 
-.scroll-fade-container::after {
-  right: 0;
-  background: linear-gradient(to left, rgba(248, 250, 249, 1) 0%, rgba(248, 250, 249, 0) 100%);
-}
-
-/* White background fade for sections with white background */
-.scroll-fade-container.bg-white::before {
-  background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
-}
-
-.scroll-fade-container.bg-white::after {
-  background: linear-gradient(to left, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
-}
-
-/* Gray background fade for sections with gray background */
-.scroll-fade-container.bg-gray::before {
-  background: linear-gradient(to right, rgba(249, 250, 251, 1) 0%, rgba(249, 250, 251, 0) 100%);
-}
-
-.scroll-fade-container.bg-gray::after {
-  background: linear-gradient(to left, rgba(249, 250, 251, 1) 0%, rgba(249, 250, 251, 0) 100%);
-}

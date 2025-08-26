@@ -6,8 +6,8 @@ export default function Footer() {
       <div className="px-8">
         <div className="grid md:grid-cols-3 gap-8 items-center">
           <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 relative">
-              <Image src="/placeholder-z3e4p.png" alt="Rotary Logo" fill className="object-contain" />
+            <div className="w-20 h-20 relative"> {/* Increased size slightly for better visibility */}
+              <Image src="/rotary-international-wheel.png" alt="Rotary Logo" fill className="object-contain" />
             </div>
             <div>
               <h3 className="font-montserrat font-bold text-xl">Rotary Club of Gudalur Garden City</h3>
@@ -16,7 +16,7 @@ export default function Footer() {
           </div>
 
           <div className="text-center">
-            <p className="text-white/80 font-semibold">Club ID: 12345 | RI District: 3201</p>
+            <p className="text-white/80 font-semibold">Club ID: 88574 | RI District: 3000</p>
             <p className="text-white/80 font-semibold mt-1">Chartered: 2020</p>
           </div>
 
@@ -26,7 +26,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/20 mt-8 pt-8 text-center">
+        <div className="border-t border-white/20 mt-8 pt-8 flex justify-between items-center">
+          <p className="text-white/60 font-semibold">Site made by PTC</p>
           <p className="text-white/60 font-semibold">
             Part of Rotary International - Creating positive change in communities worldwide
           </p>

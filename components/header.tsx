@@ -28,20 +28,20 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-emerald-700 shadow-lg">
-      <div className="px-4 sm:px-8 py-3">
+      <div className="px-4 sm:px-8 py-2"> {/* Further adjusted padding to shrink header */}
         <div className="flex items-center justify-between">
           {/* Left Logo */}
-          <div className="w-16 h-16 sm:w-20 sm:h-20 relative bg-white/20 rounded-full p-1.5 border-2 border-white/50 flex-shrink-0">
-            <Image src="/rotary-international-wheel.png" alt="Rotary Logo" fill className="object-contain" />
+          <div className="w-32 h-32 sm:w-40 sm:h-40 relative bg-white rounded-full p-2 border-2 border-white/50 flex-shrink-0 overflow-hidden"> {/* Increased fixed size, removed flex-grow */}
+            <Image src="/rotary-international-wheel.png" alt="Rotary Logo" fill className="object-cover rounded-full" style={{mixBlendMode: 'multiply'}} />
           </div>
           {/* Club Info */}
           <div className="text-center">
-            <h1 className="font-montserrat font-extrabold text-2xl text-white">Rotary Club of Gudalur Garden City</h1>
-            <p className="text-sm text-white/90 font-semibold">Club ID: 12345 | RI District: 3201</p>
+            <h1 className="font-montserrat font-extrabold text-5xl text-white mb-2">Rotary Club of Gudalur Garden City</h1> {/* Increased font size, added bottom margin */}
+            <p className="text-xl text-white/90 font-semibold">Club ID: 88574 | RI District: 3000</p> {/* Increased font size */}
           </div>
           {/* Right Logo */}
-          <div className="w-16 h-16 sm:w-20 sm:h-20 relative bg-white/20 rounded-full p-1.5 border-2 border-white/50 flex-shrink-0">
-            <Image src="/placeholder-logo.svg" alt="Placeholder Logo" fill className="object-contain" />
+          <div className="w-32 h-32 sm:w-40 sm:h-40 relative bg-white/20 rounded-full p-1.5 border-2 border-white/50 flex-shrink-0"> {/* Increased fixed size, removed flex-grow */}
+            <Image src="/Logo2.png" alt="RI District 3000 Logo" fill className="object-cover rounded-full" />
           </div>
         </div>
       </div>

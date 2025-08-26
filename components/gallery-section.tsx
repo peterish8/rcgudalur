@@ -82,13 +82,8 @@ export default function GallerySection() {
     }
   }
 
-  // Split images into two rows
-  const topRowImages = galleryImages.slice(0, Math.ceil(galleryImages.length / 2))
-  const bottomRowImages = galleryImages.slice(Math.ceil(galleryImages.length / 2))
-
-  // Create duplicated arrays for seamless loop
-  const duplicatedTopRow = [...topRowImages, ...topRowImages, ...topRowImages]
-  const duplicatedBottomRow = [...bottomRowImages, ...bottomRowImages, ...bottomRowImages]
+  // Create duplicated array for seamless loop
+  const duplicatedImages = [...galleryImages, ...galleryImages, ...galleryImages]
 
   // Top Row Handlers
   const handleTopRowMouseEnter = () => {
@@ -180,9 +175,8 @@ export default function GallerySection() {
           </p>
         </div>
 
-        {/* Two-Layer Auto-scrolling Gallery with Fade Effects */}
-        <div className="space-y-6 overflow-hidden">
-          {/* Top Row - Scrolls Left to Right */}
+        {/* Single-Layer Auto-scrolling Gallery */}
+        <div className="overflow-hidden">
           <div className="scroll-fade-container bg-gray overflow-hidden">
             <div
               ref={topRowRef}
@@ -210,72 +204,12 @@ export default function GallerySection() {
                 handleTopRowDragEnd()
               }}
             >
-              {duplicatedTopRow.map((image, index) => (
+              {duplicatedImages.map((image, index) => (
                 <div
-                  key={`top-${image.id}-${index}`}
+                  key={`gallery-${image.id}-${index}`}
                   className="flex-shrink-0 w-80 modern-card overflow-hidden cursor-pointer group hover:shadow-2xl transition-shadow duration-300"
                   onClick={() => {
                     if (!topRowDragging) {
-                      setSelectedImage(image)
-                    }
-                  }}
-                >
-                  <div className="relative h-56 overflow-hidden">
-                    <Image
-                      src={image.image_url || "/placeholder.svg?height=224&width=320"}
-                      alt={image.caption || "Gallery image"}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <p className="text-white text-sm font-semibold">Click to view full image</p>
-                    </div>
-                  </div>
-                  {image.caption && (
-                    <div className="p-5">
-                      <p className="text-gray-700 font-semibold line-clamp-2 text-sm">{image.caption}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Bottom Row - Scrolls Right to Left */}
-          <div className="scroll-fade-container bg-gray overflow-hidden">
-            <div
-              ref={bottomRowRef}
-              className={`flex gap-6 animate-scroll-left ${bottomRowPaused ? (bottomRowDragging ? "cursor-grabbing" : "cursor-grab") : ""}`}
-              style={{
-                animationDuration: "45s",
-                width: "fit-content",
-                animationPlayState: bottomRowPaused ? "paused" : "running",
-              }}
-              onMouseEnter={handleBottomRowMouseEnter}
-              onMouseLeave={handleBottomRowMouseLeave}
-              onMouseDown={(e) => handleBottomRowDragStart(e.pageX)}
-              onMouseMove={(e) => handleBottomRowDragMove(e.pageX)}
-              onMouseUp={handleBottomRowDragEnd}
-              onTouchStart={(e) => {
-                e.preventDefault()
-                handleBottomRowDragStart(e.touches[0].clientX)
-              }}
-              onTouchMove={(e) => {
-                e.preventDefault()
-                handleBottomRowDragMove(e.touches[0].clientX)
-              }}
-              onTouchEnd={(e) => {
-                e.preventDefault()
-                handleBottomRowDragEnd()
-              }}
-            >
-              {duplicatedBottomRow.map((image, index) => (
-                <div
-                  key={`bottom-${image.id}-${index}`}
-                  className="flex-shrink-0 w-80 modern-card overflow-hidden cursor-pointer group hover:shadow-2xl transition-shadow duration-300"
-                  onClick={() => {
-                    if (!bottomRowDragging) {
                       setSelectedImage(image)
                     }
                   }}

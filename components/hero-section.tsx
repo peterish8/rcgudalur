@@ -16,13 +16,14 @@ export default function HeroSection() {
     const calculateHeaderHeight = () => {
       const header = document.querySelector("header")
       if (header && sectionRef.current) {
-        sectionRef.current.style.paddingTop = `${header.offsetHeight + 20}px`
+        sectionRef.current.style.paddingTop = `${header.offsetHeight + 60}px` // Increased offset
       }
     }
 
     // Recalculate on mount and after a short delay to account for image loading
     setTimeout(calculateHeaderHeight, 100)
     setTimeout(calculateHeaderHeight, 500)
+    setTimeout(calculateHeaderHeight, 1000) // Added another delay for robustness
     
     window.addEventListener("resize", calculateHeaderHeight)
 
@@ -40,7 +41,7 @@ export default function HeroSection() {
       const { data, error } = await supabase.from("events").select("*").order("date", { ascending: true }).limit(5)
 
       if (error) {
-        console.error("Error fetching events:", error)
+        console.error("Error fetching events:", error.message || error)
         setEvents([
           {
             id: 1,
@@ -110,17 +111,14 @@ export default function HeroSection() {
   const handleNotificationMouseEnter = () => {
     setIsPaused(true)
     if (notificationScrollRef.current) {
-      const computedStyle = window.getComputedStyle(notificationScrollRef.current)
-      const transform = computedStyle.transform
-      notificationScrollRef.current.style.transform = transform
-      notificationScrollRef.current.style.animation = "none"
+      notificationScrollRef.current.style.animationPlayState = "paused"
     }
   }
 
   const handleNotificationMouseLeave = () => {
     setIsPaused(false)
     if (notificationScrollRef.current) {
-      notificationScrollRef.current.style.animation = ""
+      notificationScrollRef.current.style.animationPlayState = "running"
     }
   }
 
@@ -152,17 +150,7 @@ export default function HeroSection() {
                   <p className="text-lg sm:text-xl lg:text-2xl text-white/95 mb-8 sm:mb-10 max-w-3xl font-medium">
                     Uniting leaders, building friendships, and creating lasting change in our community.
                   </p>
-                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-                    <button onClick={() => scrollToSection("contact")} className="btn-modern">
-                      Join Our Mission
-                    </button>
-                    <button
-                      onClick={() => scrollToSection("events")}
-                      className="btn-outline text-white border-white hover:bg-white hover:text-emerald-600"
-                    >
-                      Explore Events
-                    </button>
-                  </div>
+                  
                 </div>
               </div>
 
@@ -171,42 +159,56 @@ export default function HeroSection() {
                 <h2 className="grand-title font-montserrat font-black text-3xl sm:text-4xl lg:text-5xl mb-6 sm:mb-8">
                   About Our Club
                 </h2>
-                <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-                  <div className="space-y-4 sm:space-y-6">
-                    <p className="text-gray-700 leading-relaxed text-base sm:text-lg">
-                      The Rotary Club of Gudalur Garden City is a dynamic community of leaders, professionals, and
-                      changemakers dedicated to humanitarian service. We believe in fostering goodwill, promoting peace,
-                      and building a better future for all.
-                    </p>
-                    <p className="text-gray-700 leading-relaxed text-base sm:text-lg">
-                      Our mission is to bring together people from all walks of life to exchange ideas, take action, and
-                      make a meaningful difference in Gudalur and beyond.
-                    </p>
-                    <button
-                      onClick={() => window.open("https://rotary.org", "_blank")}
-                      className="text-emerald-600 hover:text-emerald-700 font-bold text-base sm:text-lg transition-colors duration-300"
-                    >
-                      Learn More About Rotary →
-                    </button>
+                
+                {/* Full text at the top */}
+                <div className="space-y-4 sm:space-y-6 mb-8 lg:mb-12">
+                  <p className="text-gray-700 leading-relaxed text-lg sm:text-xl font-bold">
+                   Rotary Club of Gudalur Garden City charted on "01-July-2017" with the set of service 
+                   minded people to serve this community with the long-lasting change. Our few avenues 
+                   of services are but not limited to, Ending Polio, Promoting peace, Fighting disease, 
+                   Supporting education, Saving mothers & children and Protecting the environment. We, 
+                   together build friendship with the common motto as "Service Above Self" and connect the 
+                   dots to make a big impact to the needy people.
+                  </p>
+                  <p className="text-gray-700 leading-relaxed text-lg sm:text-xl font-bold">
+                    Our club periodically conducts the camp for Blood donation, End-Polio, 
+                    Disease prevention and other service projects in this vicinity. Kindly watch out event 
+                    section for upcoming events and utilize the opportunity and support for our effort.
+                  </p>
+                  <button
+                    onClick={() => window.open("https://rotary.org", "_blank")}
+                    className="text-emerald-600 hover:text-emerald-700 font-bold text-base sm:text-lg transition-colors duration-300"
+                  >
+                    Learn More About Rotary →
+                  </button>
+                </div>
+
+                {/* Two info boxes at the bottom */}
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
+                  {/* Active Members - Clickable */}
+                  <div 
+                    onClick={() => scrollToSection("board")}
+                    className="bg-gradient-to-br from-teal-50 to-teal-100 p-6 sm:p-8 rounded-2xl border-2 border-teal-200 text-center cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105 min-w-[200px]"
+                  >
+                    <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">👥</div>
+                    <h3 className="font-black text-2xl sm:text-3xl text-teal-600 mb-1 sm:mb-2">25+</h3>
+                    <p className="text-gray-700 font-semibold text-sm sm:text-base">Active Members</p>
                   </div>
-                  <div className="grid grid-cols-1 gap-4 sm:gap-6">
-                    <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 p-6 sm:p-8 rounded-2xl border-2 border-emerald-200">
-                      <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">🏆</div>
-                      <h3 className="font-black text-2xl sm:text-3xl text-emerald-600 mb-1 sm:mb-2">20+</h3>
-                      <p className="text-gray-700 font-semibold text-sm sm:text-base">Community Service Projects</p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 sm:gap-6">
-                      <div className="bg-gradient-to-br from-teal-50 to-teal-100 p-4 sm:p-6 rounded-2xl border-2 border-teal-200 text-center">
-                        <div className="text-2xl sm:text-3xl mb-1 sm:mb-2">👥</div>
-                        <h3 className="font-black text-xl sm:text-2xl text-teal-600">25</h3>
-                        <p className="text-gray-700 font-semibold text-xs sm:text-sm">Active Members</p>
-                      </div>
-                      <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 sm:p-6 rounded-2xl border-2 border-green-200 text-center">
-                        <div className="text-2xl sm:text-3xl mb-1 sm:mb-2">⭐</div>
-                        <h3 className="font-black text-xl sm:text-2xl text-green-600">10+</h3>
-                        <p className="text-gray-700 font-semibold text-xs sm:text-sm">Years of Service</p>
-                      </div>
-                    </div>
+                  
+                  {/* Years of Service - Dynamic */}
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 sm:p-8 rounded-2xl border-2 border-green-200 text-center min-w-[200px]">
+                    <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">⭐</div>
+                    <h3 className="font-black text-2xl sm:text-3xl text-green-600 mb-1 sm:mb-2">
+                      {(() => {
+                        const startDate = new Date(2017, 6, 1); // July 1, 2017
+                        const today = new Date();
+                        let years = today.getFullYear() - startDate.getFullYear();
+                        const isBeforeAnniversary = today.getMonth() < 6 || (today.getMonth() === 6 && today.getDate() < 1);
+                        if (isBeforeAnniversary) years--;
+                        return years;
+                      })()}+
+                    </h3>
+                    <p className="text-gray-700 font-semibold text-sm sm:text-base">Years of Service</p>
                   </div>
                 </div>
               </div>
