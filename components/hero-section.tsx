@@ -38,47 +38,47 @@ export default function HeroSection() {
 
   const fetchEvents = async () => {
     try {
-      const { data, error } = await supabase.from("events").select("*").order("date", { ascending: true }).limit(5)
+      const { data, error } = await supabase.from("events").select("*").order("event_date", { ascending: true }).limit(5)
 
       if (error) {
         console.error("Error fetching events:", error.message || error)
         setEvents([
           {
-            id: 1,
+            id: "1",
             title: "Community Health Camp",
-            date: "2024-01-15",
+            event_date: "2024-01-15",
             description: "Free health checkups and medical consultations for the community members",
             image_url: "/community-health-camp.png",
             created_at: new Date().toISOString(),
           },
           {
-            id: 2,
+            id: "2",
             title: "Tree Plantation Drive",
-            date: "2024-01-22",
+            event_date: "2024-01-22",
             description: "Environmental initiative to plant 500 trees in Gudalur area for a greener future",
             image_url: "/tree-plantation.png",
             created_at: new Date().toISOString(),
           },
           {
-            id: 3,
+            id: "3",
             title: "Educational Scholarship Distribution",
-            date: "2024-02-05",
+            event_date: "2024-02-05",
             description: "Annual scholarship ceremony for deserving students in our community",
             image_url: "/scholarship-ceremony.png",
             created_at: new Date().toISOString(),
           },
           {
-            id: 4,
+            id: "4",
             title: "Blood Donation Camp",
-            date: "2024-02-12",
+            event_date: "2024-02-12",
             description: "Life-saving blood donation drive in partnership with local hospitals",
             image_url: "/community-health-camp.png",
             created_at: new Date().toISOString(),
           },
           {
-            id: 5,
+            id: "5",
             title: "Youth Leadership Awards",
-            date: "2024-02-20",
+            event_date: "2024-02-20",
             description: "Recognizing outstanding young leaders making positive impact in society",
             image_url: "/youth-leadership-awards.png",
             created_at: new Date().toISOString(),
@@ -262,7 +262,7 @@ export default function HeroSection() {
                               {event.description}
                             </p>
                             <p className="text-emerald-600 text-xs font-bold">
-                              {new Date(event.date).toLocaleDateString("en-IN", {
+                              {new Date(event.event_date).toLocaleDateString("en-IN", {
                                 day: "numeric",
                                 month: "short",
                                 year: "numeric",

@@ -2,11 +2,11 @@
 
 import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
-import { supabase, type GalleryImage } from "@/lib/supabase"
+import { supabase, type Gallery } from "@/lib/supabase"
 
 export default function GallerySection() {
-  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([])
-  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null)
+  const [galleryImages, setGalleryImages] = useState<Gallery[]>([])
+  const [selectedImage, setSelectedImage] = useState<Gallery | null>(null)
   const [topRowPaused, setTopRowPaused] = useState(false)
   const [bottomRowPaused, setBottomRowPaused] = useState(false)
   const [topRowDragging, setTopRowDragging] = useState(false)
@@ -23,62 +23,18 @@ export default function GallerySection() {
   }, [])
 
   const fetchGalleryImages = async () => {
-    const { data, error } = await supabase.from("gallery").select("*").order("created_at", { ascending: false })
+    try {
+      const { data, error } = await supabase
+        .from('gallery')
+        .select('id, title, description, image_url')
+        .order('created_at', { ascending: false })
 
-    if (error) {
-      console.error("Error fetching gallery images:", error)
-      setGalleryImages([
-        {
-          id: 1,
-          image_url: "/community-service.png",
-          caption: "Community Service Project - Helping local families with essential supplies and support",
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: 2,
-          image_url: "/weekly-club-meeting.png",
-          caption: "Weekly Club Meeting - Planning our next community initiatives",
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: 3,
-          image_url: "/annual-charity-fundraiser.png",
-          caption: "Annual Charity Fundraiser - Raising funds for local education programs",
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: 4,
-          image_url: "/youth-development.png",
-          caption: "Youth Development Program - Mentoring the next generation of leaders",
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: 5,
-          image_url: "/environmental-initiative.png",
-          caption: "Environmental Initiative - Protecting our natural resources for future generations",
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: 6,
-          image_url: "/community-health-camp.png",
-          caption: "Health Camp Initiative - Providing free medical checkups to underserved communities",
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: 7,
-          image_url: "/tree-plantation.png",
-          caption: "Tree Plantation Drive - Creating a greener future for Gudalur",
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: 8,
-          image_url: "/scholarship-ceremony.png",
-          caption: "Scholarship Distribution - Supporting education for deserving students",
-          created_at: new Date().toISOString(),
-        },
-      ])
-    } else {
+      if (error) throw error
       setGalleryImages(data || [])
+    } catch (error) {
+      console.error('Error fetching gallery:', error)
+      // Fallback data if needed
+      setGalleryImages([])
     }
   }
 
@@ -217,7 +173,7 @@ export default function GallerySection() {
                   <div className="relative h-56 overflow-hidden">
                     <Image
                       src={image.image_url || "/placeholder.svg?height=224&width=320"}
-                      alt={image.caption || "Gallery image"}
+                      alt={image.title || "Gallery image"}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-500"
                     />
@@ -226,11 +182,10 @@ export default function GallerySection() {
                       <p className="text-white text-sm font-semibold">Click to view full image</p>
                     </div>
                   </div>
-                  {image.caption && (
-                    <div className="p-5">
-                      <p className="text-gray-700 font-semibold line-clamp-2 text-sm">{image.caption}</p>
-                    </div>
-                  )}
+                  <div className="p-5">
+                    <h4 className="text-gray-900 font-bold text-sm mb-1">{image.title || "Gallery Image"}</h4>
+                    <p className="text-gray-700 text-xs line-clamp-2">{image.description || ""}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -256,17 +211,17 @@ export default function GallerySection() {
                 <div className="relative h-96">
                   <Image
                     src={selectedImage.image_url || "/placeholder.svg"}
-                    alt={selectedImage.caption || "Gallery image"}
+                    alt={selectedImage.title || "Gallery image"}
                     fill
                     className="object-cover"
                   />
                 </div>
                 <div className="p-8">
                   <h3 className="font-montserrat font-bold text-2xl text-gray-900 mb-4">
-                    {selectedImage.caption?.split(" - ")[0] || "Gallery Image"}
+                    {selectedImage.title || "Gallery Image"}
                   </h3>
                   <p className="text-gray-700 text-lg leading-relaxed">
-                    {selectedImage.caption || "A moment from our community service activities."}
+                    {selectedImage.description || "A moment from our community service activities."}
                   </p>
                 </div>
               </div>

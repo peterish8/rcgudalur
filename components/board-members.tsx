@@ -1,53 +1,10 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
+import { supabase, type BoardMember } from "@/lib/supabase"
 
-// Define the new structure for a board member
-interface BoardMember {
-  name: string;
-  designation: string;
-}
 
-const fixedMembers: BoardMember[] = [
-  { name: "Rtn.Dr.Poornima", designation: "President" },
-  { name: "Rtn.R.Boobesh Kannan", designation: "Secretary" },
-  { name: "Rtn.M.Santhosh", designation: "Treasurer" },
-];
-
-const scrollingLayer1Members: BoardMember[] = [
-  { name: "Rtn.K.Chithiresan", designation: "Executive Secretary" },
-  { name: "Rtn.Er.K.Suresh Kannan", designation: "Foundation Chairman" },
-  { name: "Rtn.G.Selva Kumar", designation: "Learning Facilitator" },
-  { name: "Rtn.S.Ashok", designation: "Membership Development" },
-  { name: "Rtn.J.Vimal Kumar", designation: "Public Image Chairman" },
-  { name: "Rtn.A.Thiru Kannan", designation: "Service Project Chairman" },
-  { name: "Rtn.B.Seenivasan", designation: "Vice President" },
-];
-
-const scrollingLayer2Members: BoardMember[] = [
-  { name: "Rtn.M.Kumar", designation: "IPP,Young Leaders Contact" },
-  { name: "Rtn.C.Ravi", designation: "Special Projects" },
-  { name: "Rtn.Dr.K.Selvam", designation: "Medical Camps" },
-  { name: "Rtn.M.Abdul Rahim", designation: "Celebrations" },
-  { name: "Rtn.G.Kannan", designation: "Family Meetings" },
-  { name: "Rtn.S.Mahalingam", designation: "Club Advisor" },
-  { name: "Rtn.R.K.Kannan", designation: "Literacy" },
-  { name: "Rtn.M.Kavi Manoj", designation: "Interact Ryla" },
-];
-
-const scrollingLayer3Members: BoardMember[] = [
-  { name: "Rtn.V.Jeya Prakash", designation: "Sports" },
-  { name: "Rtn.V.Rajiv", designation: "Rotract Club, Interact Club" },
-  { name: "Rtn.Dr.Thiyagarajan", designation: "Blood Camp" },
-  { name: "Rtn.K.Kalaivani", designation: "Greetings" },
-  { name: "Rtn.P.Prabhakaran", designation: "Food Management" },
-  { name: "Rtn.Suresh Kumar", designation: "Regular Meetings" },
-  { name: "Rtn.P.Paramasivam", designation: "Regular Meetings" },
-  { name: "Rtn.R.Saravanakumar", designation: "Regular Meetings" },
-  { name: "Rtn.Vinoth Kannan", designation: "Polio Plus" },
-  { name: "Rtn.U.Prabhu", designation: "IT Wing" },
-];
 
 // BoardMemberCard component
 const BoardMemberCard: React.FC<{ member: BoardMember }> = ({ member }) => {
@@ -63,14 +20,43 @@ const BoardMemberCard: React.FC<{ member: BoardMember }> = ({ member }) => {
 };
 
 export default function BoardMembers() {
+  const [boardMembers, setBoardMembers] = useState<BoardMember[]>([])
+  const [loading, setLoading] = useState(true)
   const scrollRef1 = useRef<HTMLDivElement>(null);
   const scrollRef2 = useRef<HTMLDivElement>(null);
   const scrollRef3 = useRef<HTMLDivElement>(null);
 
-  // Duplicate members for seamless looping for each scrolling layer
-  const duplicatedLayer1Members = [...scrollingLayer1Members, ...scrollingLayer1Members, ...scrollingLayer1Members];
-  const duplicatedLayer2Members = [...scrollingLayer2Members, ...scrollingLayer2Members, ...scrollingLayer2Members];
-  const duplicatedLayer3Members = [...scrollingLayer3Members, ...scrollingLayer3Members, ...scrollingLayer3Members];
+  useEffect(() => {
+    fetchBoardMembers()
+  }, [])
+
+  const fetchBoardMembers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('board_members')
+        .select('id, designation, name')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      setBoardMembers(data || [])
+    } catch (error) {
+      console.error('Error fetching board members:', error)
+      setBoardMembers([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Split members into groups for display
+  const chunkSize = Math.ceil(boardMembers.length / 3)
+  const layer1Members = boardMembers.slice(0, chunkSize)
+  const layer2Members = boardMembers.slice(chunkSize, chunkSize * 2)
+  const layer3Members = boardMembers.slice(chunkSize * 2)
+
+  // Duplicate members for seamless looping
+  const duplicatedLayer1Members = [...layer1Members, ...layer1Members, ...layer1Members];
+  const duplicatedLayer2Members = [...layer2Members, ...layer2Members, ...layer2Members];
+  const duplicatedLayer3Members = [...layer3Members, ...layer3Members, ...layer3Members];
 
   // Effect to handle auto-scrolling for each row
   useEffect(() => {
@@ -134,12 +120,15 @@ export default function BoardMembers() {
           />
         </div>
 
-        {/* Fixed Members Section */}
-        <div className="flex justify-center gap-5 mb-8 flex-wrap">
-          {fixedMembers.map((member, index) => (
-            <BoardMemberCard key={`fixed-${index}`} member={member} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="text-center py-12">
+            <p className="text-emerald-700">Loading board members...</p>
+          </div>
+        ) : boardMembers.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-emerald-700">No board members found.</p>
+          </div>
+        ) : null}
 
         {/* Auto-scrolling for both Desktop and Mobile with Fade Effects */}
         <div className="scroll-fade-container overflow-hidden py-4">

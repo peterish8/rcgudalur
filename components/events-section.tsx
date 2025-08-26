@@ -3,9 +3,11 @@
 import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
 import { supabase, type Event } from "@/lib/supabase"
+import { Card, CardContent } from "@/components/ui/card"
 
 export default function EventsSection() {
   const [events, setEvents] = useState<Event[]>([])
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([])
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [isPaused, setIsPaused] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
@@ -18,73 +20,33 @@ export default function EventsSection() {
   }, [])
 
   const fetchEvents = async () => {
-    const { data, error } = await supabase.from("events").select("*").order("date", { ascending: true })
+    try {
+      const { data, error } = await supabase
+        .from('events')
+        .select('id, title, description, event_date, image_url')
+        .order('event_date', { ascending: true })
 
-    if (error) {
-      console.error("Error fetching events:", error)
-      const fallbackEvents = [
-        {
-          id: 1,
-          title: "Community Health Camp",
-          date: "2024-01-15",
-          description:
-            "Free health checkups and medical consultations for the community. Our medical team will provide comprehensive health screenings, basic treatments, and health education to community members. This initiative aims to improve healthcare accessibility in underserved areas of Gudalur.",
-          image_url: "/community-health-camp.png",
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: 2,
-          title: "Tree Plantation Drive",
-          date: "2024-01-22",
-          description:
-            "Environmental initiative to plant 500 trees in Gudalur area. Join us in our mission to create a greener future for our community and combat climate change. We will be planting native species that will help restore the local ecosystem.",
-          image_url: "/tree-plantation.png",
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: 3,
-          title: "Educational Scholarship Distribution",
-          date: "2024-02-05",
-          description:
-            "Annual scholarship ceremony for deserving students. We will be awarding scholarships to outstanding students who demonstrate academic excellence and financial need. This program supports education and empowers the next generation of leaders.",
-          image_url: "/scholarship-ceremony.png",
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: 4,
-          title: "Blood Donation Camp",
-          date: "2024-02-12",
-          description:
-            "Life-saving blood donation drive in partnership with local hospitals. Every donation can save up to three lives. Join us in this noble cause to help patients in need of blood transfusions and support our healthcare system.",
-          image_url: "/community-health-camp.png",
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: 5,
-          title: "Youth Leadership Awards",
-          date: "2024-02-20",
-          description:
-            "Recognizing outstanding young leaders in our community. Celebrating the achievements of youth who are making a positive impact in society through their leadership, innovation, and community service efforts.",
-          image_url: "/youth-leadership-awards.png",
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: 6,
-          title: "Community Clean-up Drive",
-          date: "2024-03-01",
-          description:
-            "Join us for a community-wide clean-up initiative to keep our neighborhoods clean and beautiful. Together we can make a difference in maintaining a healthy environment for all residents of Gudalur.",
-          image_url: "/environmental-initiative.png",
-          created_at: new Date().toISOString(),
-        },
-      ]
-      setEvents(fallbackEvents)
-      setSelectedEvent(fallbackEvents[0])
-    } else {
+      if (error) throw error
       setEvents(data || [])
       if (data && data.length > 0) {
         setSelectedEvent(data[0])
       }
+
+      // Fetch upcoming events
+      const today = new Date().toISOString().split('T')[0]
+      const { data: upcomingData, error: upcomingError } = await supabase
+        .from('events')
+        .select('id, title, event_date')
+        .gte('event_date', today)
+        .order('event_date', { ascending: true })
+        .limit(3)
+
+      if (!upcomingError) {
+        setUpcomingEvents(upcomingData || [])
+      }
+    } catch (error) {
+      console.error('Error fetching events:', error)
+      setEvents([])
     }
   }
 
@@ -139,8 +101,51 @@ export default function EventsSection() {
     }
   }
 
+  const formatDate = (dateString: string) => {
+    try {
+      return new Date(dateString).toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      })
+    } catch {
+      return dateString
+    }
+  }
+
+  const truncateTitle = (title: string, maxWords: number = 4) => {
+    const words = title.split(' ')
+    if (words.length <= maxWords) return title
+    return words.slice(0, maxWords).join(' ') + '...'
+  }
+
   return (
-    <section id="events" className="pt-10 pb-20 bg-white">
+    <>
+      {/* Upcoming Events Section */}
+      {upcomingEvents.length > 0 && (
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-8">Upcoming Events</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              {upcomingEvents.map((event) => (
+                <Card key={event.id} className="hover:shadow-lg transition-shadow">
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold text-lg mb-2">
+                      {truncateTitle(event.title)}
+                    </h3>
+                    <p className="text-blue-600 font-medium">
+                      {formatDate(event.event_date)}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Main Events Section */}
+      <section id="events" className="pt-10 pb-20 bg-white">
       <div className="px-4 sm:px-8">
         <div className="text-center mb-16">
           <h2 className="grand-title font-montserrat font-black text-6xl mb-6">Our Events</h2>
@@ -170,7 +175,7 @@ export default function EventsSection() {
                   {selectedEvent.title}
                 </h3>
                 <p className="text-emerald-600 font-bold text-lg mb-6">
-                  {new Date(selectedEvent.date).toLocaleDateString("en-IN", {
+                  {new Date(selectedEvent.event_date).toLocaleDateString("en-IN", {
                     weekday: "long",
                     year: "numeric",
                     month: "long",
@@ -246,7 +251,7 @@ export default function EventsSection() {
                   </div>
                   <div className="p-5">
                     <div className="inline-block bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-bold mb-3">
-                      {new Date(event.date).toLocaleDateString("en-IN", {
+                      {new Date(event.event_date).toLocaleDateString("en-IN", {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
@@ -261,6 +266,7 @@ export default function EventsSection() {
           </div>
         </div>
       </div>
-    </section>
+      </section>
+    </>
   )
 }

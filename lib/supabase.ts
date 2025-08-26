@@ -5,41 +5,49 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-export type Event = {
-  id: number
-  title: string
-  date: string
-  description: string
-  image_url: string | null
-  created_at: string
-}
-
+// Types matching the actual database schema
 export type BoardMember = {
-  id: number
+  id: string // UUID
   name: string
-  position: string
-  year: string
+  designation: string
+  created_at: string
+}
+
+export type Event = {
+  id: string // UUID
+  title: string
+  description: string | null
+  event_date: string // date field
   image_url: string | null
   created_at: string
 }
 
-export type GalleryImage = {
-  id: number
+export type Gallery = {
+  id: string // UUID
+  title: string
+  description: string | null
+  image_url: string | null
+  created_at: string
+}
+
+// Alias for backward compatibility
+export type GalleryImage = Gallery
+
+// Form types for creating/updating
+export type GalleryInput = {
+  title: string
+  description: string
   image_url: string
-  caption: string | null
-  created_at: string
 }
 
-export type About = {
-  id: number
-  welcome_title: string
-  about_text: string
-  created_at: string
+export type EventInput = {
+  title: string
+  description: string
+  event_date: string
+  image_url: string
 }
 
-export type ContactSubmission = {
+export type BoardMemberInput = {
+  designation: string
   name: string
-  email?: string
-  phone?: string
-  message: string
 }
